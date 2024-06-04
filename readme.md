@@ -79,4 +79,4 @@ Proyek ini dilisensikan di bawah MIT License. Lihat [LICENSE](./License) untuk i
 
 ---
 
-Terima kasih telah menggunakan Deteksi Hiragana Basic! Jika Anda memiliki pertanyaan atau masalah, silakan buka issue di repositori ini atau hubungi saya langsung.
+Terima kasih telah menggunakan Deteksi Hiragana Basic! Jika Anda memiliki pertanyaan atau masalah, silakan buka issue di repositori ini atau hubungi saya langsung [NafMn](mailto:nafis@nafisdvlp.my.id).
