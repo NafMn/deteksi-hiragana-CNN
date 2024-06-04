@@ -23,7 +23,7 @@ Ikuti langkah-langkah berikut untuk menginstal semua dependensi yang diperlukan:
 1. **Clone repositori ini:**
 
     ```bash
-    git clone https://github.com/username/repo-name.git
+    git clone https://github.com/NafMn/deteksi-hiragana-CNN.git
     cd repo-name
     ```
 
@@ -71,10 +71,11 @@ Ikuti langkah-langkah berikut untuk menginstal semua dependensi yang diperlukan:
 - opencv-python
 - matplotlib
 - numpy
+- flask
 
 ## Lisensi
 
-Proyek ini dilisensikan di bawah MIT License. Lihat [LICENSE](./LICENSE) untuk informasi lebih lanjut.
+Proyek ini dilisensikan di bawah MIT License. Lihat [LICENSE](./License) untuk informasi lebih lanjut.
 
 ---
 
