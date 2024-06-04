@@ -3,3 +3,4 @@ keras
 pandas
 opencv-python
 matplotlib
+flask
