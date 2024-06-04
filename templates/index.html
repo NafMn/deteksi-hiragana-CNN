@@ -4,35 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prediksi Hiragana</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        #container {
-            text-align: center;
-            margin-top: 50px;
-        }
-        #image-preview {
-            margin-bottom: 20px;
-        }
-    </style>
 </head>
 <body>
-    <div id="container">
-        <h1>Prediksi Hiragana</h1>
-        <form id="upload-form" method="post" enctype="multipart/form-data" action="/predict">
-            <input type="file" name="image" accept="image/*" required>
-            <button type="submit">Prediksi</button>
-        </form>
-        <div id="image-preview"></div>
-        <div id="prediction"></div>
+    <h1>Prediksi Hiragana</h1>
+
+    <!-- Form untuk mengunggah gambar -->
+    <form id="upload-form" method="post" enctype="multipart/form-data" action="/predict">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Prediksi dari Gambar</button>
+    </form>
+
+    <!-- Tombol untuk memulai dan menghentikan streaming -->
+    <button id="startStream">Mulai Streaming</button>
+    <button id="stopStream">Hentikan Streaming</button>
+
+    <!-- Kontainer untuk menampilkan video -->
+    <div id="videoContainer">
+        <img id="videoFeed" width="640" height="480" style="display:none;">
     </div>
 
+    <!-- Kontainer untuk menampilkan hasil prediksi -->
+    <div id="prediction"></div>
+
     <script>
-        const form = document.getElementById('upload-form');
-        const imagePreview = document.getElementById('image-preview');
+        const startButton = document.getElementById('startStream');
+        const stopButton = document.getElementById('stopStream');
+        const video = document.getElementById('videoFeed');
         const prediction = document.getElementById('prediction');
 
+        // Menambahkan event listener untuk tombol mulai streaming
+        startButton.addEventListener('click', async () => {
+            video.src = "{{ url_for('video_feed') }}"; // Mulai streaming video
+            video.style.display = 'block'; // Tampilkan video
+        });
+
+        // Menambahkan event listener untuk tombol hentikan streaming
+        stopButton.addEventListener('click', () => {
+            video.src = ''; // Hentikan streaming video
+            video.style.display = 'none'; // Sembunyikan video
+        });
+
+        // Memperbarui tampilan dengan hasil prediksi setelah mengunggah gambar
+        const form = document.getElementById('upload-form');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -46,11 +59,11 @@
             const imageUrl = URL.createObjectURL(blob);
             const img = document.createElement('img');
             img.src = imageUrl;
-            imagePreview.innerHTML = '';
-            imagePreview.appendChild(img);
+            prediction.innerHTML = ''; // Bersihkan hasil prediksi sebelumnya
+            prediction.appendChild(img); // Tampilkan gambar yang diunggah
 
             const text = await response.text();
-            prediction.innerHTML = text;
+            prediction.innerHTML += text; // Tampilkan hasil prediksi
         });
     </script>
 </body>

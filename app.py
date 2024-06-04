@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 import cv2
 import numpy as np
 import pandas as pd
@@ -17,9 +17,35 @@ if 'Hiragana' in df_labels.columns and 'Romaji' in df_labels.columns and 'Label'
 else:
     raise KeyError("Column names 'Hiragana', 'Romaji', and 'Label' are required in hiragana_labels.csv")
 
-
 app = Flask(__name__)
 
+# Fungsi untuk mendapatkan frame dari kamera
+def gen_frames():
+    cap = cv2.VideoCapture(0)
+    while True:
+        # Baca frame dari kamera
+        success, frame = cap.read()
+        if not success:
+            break
+        else:
+            # Lakukan prediksi pada frame yang didapat
+            predicted_label, predicted_romaji = predict_image_cv(model, frame, hiragana_labels)
+
+            # Tampilkan hasil prediksi pada layar
+            if predicted_label is not None and predicted_romaji is not None:
+                cv2.putText(frame, f'Prediksi: {predicted_label} ({predicted_romaji})', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+# Endpoint untuk streaming video dari kamera
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# Fungsi untuk memprediksi gambar menggunakan model
 def predict_image_cv(model, image, label_map):
     # Ubah gambar menjadi skala abu-abu
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -48,27 +74,23 @@ def predict_image_cv(model, image, label_map):
 
     return predicted_label, predicted_romaji
 
+# Endpoint untuk halaman utama
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# Endpoint untuk prediksi gambar yang diunggah
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Ambil file gambar dari form
     image = request.files['image']
-    # Baca file gambar
     img_np = np.frombuffer(image.read(), np.uint8)
-    # Baca gambar menggunakan OpenCV
     frame = cv2.imdecode(img_np, cv2.IMREAD_COLOR)
 
-    # Lakukan prediksi pada frame yang didapat
     predicted_label, predicted_romaji = predict_image_cv(model, frame, hiragana_labels)
 
-    # Tampilkan hasil prediksi pada layar
     if predicted_label is not None and predicted_romaji is not None:
         cv2.putText(frame, f'Prediksi: {predicted_label} ({predicted_romaji})', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
-    # Konversi frame OpenCV ke format yang bisa ditampilkan di HTML
     ret, buffer = cv2.imencode('.jpg', frame)
     img_str = buffer.tobytes()
 
