@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi Hiragana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        #image-preview {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Prediksi Hiragana</h1>
+        <form id="upload-form" method="post" enctype="multipart/form-data" action="/predict">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Prediksi</button>
+        </form>
+        <div id="image-preview"></div>
+        <div id="prediction"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const imagePreview = document.getElementById('image-preview');
+        const prediction = document.getElementById('prediction');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const blob = await response.blob();
+
+            const imageUrl = URL.createObjectURL(blob);
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            imagePreview.innerHTML = '';
+            imagePreview.appendChild(img);
+
+            const text = await response.text();
+            prediction.innerHTML = text;
+        });
+    </script>
+</body>
+</html>
