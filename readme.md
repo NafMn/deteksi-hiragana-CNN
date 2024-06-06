@@ -73,6 +73,9 @@ Ikuti langkah-langkah berikut untuk menginstal semua dependensi yang diperlukan:
 - numpy
 - flask
 
+## Dataset Download
+- [V.1.0](https://github.com/NafMn/deteksi-hiragana-CNN/releases/tag/dataset)
+
 ## Lisensi
 
 Proyek ini dilisensikan di bawah MIT License. Lihat [LICENSE](./License) untuk informasi lebih lanjut.
